@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
   s.framework = 'ImageIO'
-  
+
   s.default_subspec = 'Core'
 
   s.subspec 'Core' do |core|
@@ -35,8 +35,11 @@ Pod::Spec.new do |s|
 
   s.subspec 'WebP' do |webp|
     webp.source_files = 'SDWebImage/UIImage+WebP.{h,m}'
-    webp.xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) SD_WEBP=1' }
+    webp.xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) SD_WEBP=1',
+                      'FRAMEWORK_SEARCH_PATHS' => '"${PODS_ROOT}/iOS-WebP/iOS-WebP/"'}
+    webp.framework = 'WebP'
     webp.dependency 'SDWebImage/Core'
-    webp.dependency 'libwebp'
+    #webp.dependency 'libwebp'
+    webp.dependency 'iOS-WebP'
   end
 end

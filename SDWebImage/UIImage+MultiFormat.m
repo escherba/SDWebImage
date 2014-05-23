@@ -11,7 +11,7 @@
 #import "NSData+ImageContentType.h"
 
 #ifdef SD_WEBP
-#import "UIImage+WebP.h"
+#import <iOS-WebP/UIImage+WebP.h>
 #endif
 
 @implementation UIImage (MultiFormat)
@@ -25,7 +25,7 @@
 #ifdef SD_WEBP
     else if ([imageContentType isEqualToString:@"image/webp"])
     {
-        image = [UIImage sd_imageWithWebPData:data];
+        image = [UIImage imageWithWebPData:data];
     }
 #endif
     else {
