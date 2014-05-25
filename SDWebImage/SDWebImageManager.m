@@ -65,7 +65,7 @@
     return [self.imageCache diskImageExistsWithKey:key];
 }
 
-- (id <SDWebImageOperation>)downloadWithURL:(NSURL *)url options:(SDWebImageOptions)options progress:(SDWebImageDownloaderProgressBlock)progressBlock completed:(SDWebImageCompletedWithFinishedBlock)completedBlock {
+- (id <SDWebImageOperation>)downloadWithURL:(NSURL *)url options:(SDWebImageOptions)options progress:(SDWebImageDownloaderProgressBlock)progressBlock transform:(SDWebImageCompletedWithTransformBlock)transformBlock completed:(SDWebImageCompletedWithFinishedBlock)completedBlock {
     // Invoking this method without a completedBlock is pointless
     NSParameterAssert(completedBlock);
 
@@ -157,18 +157,26 @@
                     if (options & SDWebImageRefreshCached && image && !downloadedImage) {
                         // Image refresh hit the NSURLCache cache, do not call the completion block
                     }
-                            // NOTE: We don't call transformDownloadedImage delegate method on animated images as most transformation code would mangle it
-                    else if (downloadedImage && !downloadedImage.images && [self.delegate respondsToSelector:@selector(imageManager:transformDownloadedImage:withURL:)]) {
+                    else if (downloadedImage && (transformBlock != nil || [self.delegate respondsToSelector:@selector(imageManager:transformDownloadedImage:withURL:)])) {
                         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-                            UIImage *transformedImage = [self.delegate imageManager:self transformDownloadedImage:downloadedImage withURL:url];
-
+                            NSError *transformError = nil;
+                            UIImage *transformedImage;
+                            if (transformBlock != nil) {
+                                // override delegate with "preprocessing" block
+                                transformedImage = transformBlock(downloadedImage, &transformError);
+                            }
+                            else {
+                                // handled by delegate
+                                transformedImage = [self.delegate imageManager:self transformDownloadedImage:downloadedImage withURL:url];
+                            }
+                            
                             if (transformedImage && finished) {
                                 BOOL imageWasTransformed = ![transformedImage isEqual:downloadedImage];
                                 [self.imageCache storeImage:transformedImage recalculateFromImage:imageWasTransformed imageData:data forKey:key toDisk:cacheOnDisk];
                             }
 
                             dispatch_main_sync_safe(^{
-                                completedBlock(transformedImage, nil, SDImageCacheTypeNone, finished);
+                                completedBlock(transformedImage, transformError, SDImageCacheTypeNone, finished);
                             });
                         });
                     }

@@ -37,6 +37,7 @@ static char operationKey;
         id<SDWebImageOperation> operation = [SDWebImageManager.sharedManager downloadWithURL:url
                                                                                      options:options
                                                                                     progress:progressBlock
+                                                                                   transform:nil
                                                                                    completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished)
                                              {
                                                  if (!wself) return;

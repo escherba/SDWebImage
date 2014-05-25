@@ -71,10 +71,11 @@ typedef NS_OPTIONS(NSUInteger, SDWebImageOptions) {
     SDWebImageHighPriority = 1 << 8
 };
 
-typedef void(^SDWebImageCompletedBlock)(UIImage *image, NSError *error, SDImageCacheType cacheType);
+typedef void (^SDWebImageCompletedBlock) (UIImage *image, NSError *error, SDImageCacheType cacheType);
 
-typedef void(^SDWebImageCompletedWithFinishedBlock)(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished);
+typedef void (^SDWebImageCompletedWithFinishedBlock) (UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished);
 
+typedef UIImage* (^SDWebImageCompletedWithTransformBlock) (UIImage *image, NSError **error);
 
 @class SDWebImageManager;
 
@@ -185,6 +186,7 @@ SDWebImageManager *manager = [SDWebImageManager sharedManager];
 - (id <SDWebImageOperation>)downloadWithURL:(NSURL *)url
                                     options:(SDWebImageOptions)options
                                    progress:(SDWebImageDownloaderProgressBlock)progressBlock
+                                  transform:(SDWebImageCompletedWithTransformBlock)transformBlock
                                   completed:(SDWebImageCompletedWithFinishedBlock)completedBlock;
 
 /**
