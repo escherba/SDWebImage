@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 Dailymotion. All rights reserved.
 //
 
+#import "SDWebImageManager.h"
 #import "MKAnnotationView+WebCache.h"
 #import "objc/runtime.h"
 
@@ -40,7 +41,7 @@ static char operationKey;
 
     if (url) {
         __weak MKAnnotationView *wself = self;
-        id <SDWebImageOperation> operation = [SDWebImageManager.sharedManager downloadWithURL:url options:options progress:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
+        id <SDWebImageOperation> operation = [(SDWebImageManager*)SDWebImageManager.sharedManager downloadWithURL:url options:options progress:nil transform:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) {
             if (!wself) return;
             dispatch_main_sync_safe(^{
                 __strong MKAnnotationView *sself = wself;
