@@ -30,6 +30,9 @@
 
 @end
 
+@synthesize executing = _executing;
+@synthesize finished = _finished;
+
 @implementation SDWebImageDownloaderOperation {
     size_t width, height;
     UIImageOrientation orientation;
